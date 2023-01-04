@@ -8,12 +8,12 @@ function Context({ children }) {
   const [numberOfQuestion, setNumberOfQuestion] = useState(0);
 
   const [correctAnswer, setCorrectAnswer] = useState(0);
-  const [wrongAnswers, setwrongAnswers] = useState(0);
   const [selectedOption, setSelectedOption] = useState(false);
   const [wrongAnsSelect, setWrongAnsSelect] = useState(false);
+  const [attemptedQuestion, setAttemptedQuestion] = useState(0);
 
   const fetchData = async () => {
-    const url = "https://opentdb.com/api.php?amount=20";
+    const url = "https://opentdb.com/api.php?amount=5";
     const data = await fetch(url);
     const res = await data.json();
     setQuestionList(res.results);
@@ -48,12 +48,12 @@ function Context({ children }) {
         numberOfQuestion,
         correctAnswer,
         setCorrectAnswer,
-        wrongAnswers,
-        setwrongAnswers,
         selectedOption,
         setSelectedOption,
         wrongAnsSelect,
         setWrongAnsSelect,
+        attemptedQuestion,
+        setAttemptedQuestion,
       }}
     >
       {children}

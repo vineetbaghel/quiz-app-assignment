@@ -6,46 +6,51 @@ function Result() {
   const location = useLocation();
   const navigate = useNavigate();
   const [precentage, setPercentage] = useState(0);
+  const [wrong, setWrong] = useState(0);
   const {
     setSelectedQuestion,
     numberOfQuestion,
     setCorrectAnswer,
-    setwrongAnswers,
     setSelectedOption,
-    setWrongAnsSelect,
-    selectedOption,
-    wrongAnsSelect,
+    setAttemptedQuestion,
   } = StateValue();
 
   const playAgain = () => {
     setSelectedQuestion(0);
     setCorrectAnswer(0);
-    setwrongAnswers(0);
-    setWrongAnsSelect(false);
+    setAttemptedQuestion(0);
+    setWrong(0);
     setSelectedOption(false);
     navigate("/questions");
   };
   const toHome = () => {
     setSelectedQuestion(0);
+    setAttemptedQuestion(0);
+    setWrong(0);
     setCorrectAnswer(0);
-    setwrongAnswers(0);
-    setWrongAnsSelect(false);
     setSelectedOption(false);
-    // setOptions([]);
-    // setQuestionList([]);
     navigate("/");
   };
   useEffect(() => {
-    if (location?.state?.wrgAns === 0 && location?.state?.rightAns === 0) {
+    setWrong(location?.state?.attemptQuestion - location?.state?.rightAns);
+    if (location?.state?.attemptQuestion === 0) {
       navigate("/");
     } else {
-      setPercentage((location.state?.rightAns / numberOfQuestion) * 100);
+      if (location?.state?.rightAns === 0) {
+        setPercentage(0);
+      } else {
+        setPercentage((location.state?.rightAns / numberOfQuestion) * 100);
+      }
     }
   }, []);
   return (
     <div className="app-home result-page">
       <div className="result-section">
-        <h2 className="result-title">You need more practice</h2>
+        {precentage > 60 ? (
+          <h2 className="result-title">You have passed the quiz test</h2>
+        ) : (
+          <h2 className="result-title">You need more practice</h2>
+        )}
         <h1 className="result-score pass">Your Score: {`${precentage}%`}</h1>
         <div className="test-details">
           <div className="score-card">
@@ -54,7 +59,7 @@ function Result() {
           </div>
           <div className="score-card">
             <p>Number of attempted questions:</p>
-            <p>{location?.state?.rightAns + location?.state?.wrgAns}</p>
+            <p>{location.state?.attemptQuestion}</p>
           </div>{" "}
           <div className="score-card">
             <p> Number of Correct questions:</p>
@@ -62,7 +67,7 @@ function Result() {
           </div>{" "}
           <div className="score-card">
             <p>Number of Wrong questions:</p>
-            <p>{location?.state?.wrgAns}</p>
+            <p>{wrong}</p>
           </div>
         </div>
       </div>
@@ -71,11 +76,9 @@ function Result() {
           Play Again
         </button>
 
-        <Link to="/">
-          <button className="btn back-to-home" onClick={toHome}>
-            Back to home
-          </button>
-        </Link>
+        <button className="btn back-to-home" onClick={toHome}>
+          Back to home
+        </button>
       </div>
     </div>
   );

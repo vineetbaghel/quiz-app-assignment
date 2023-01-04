@@ -6,6 +6,7 @@ import Result from "./Result";
 function Questions() {
   const [showresult, setShowResult] = useState(false);
   const navigate = useNavigate();
+  const [attemptedFlag, setAttemptedFlag] = useState(false);
   const {
     questionList,
     selectedQuestion,
@@ -14,12 +15,11 @@ function Questions() {
     setOptions,
     correctAnswer,
     setCorrectAnswer,
-    wrongAnswers,
-    setwrongAnswers,
     selectedOption,
     setSelectedOption,
-    wrongAnsSelect,
     setWrongAnsSelect,
+    attemptedQuestion,
+    setAttemptedQuestion,
   } = StateValue();
   const randomOption = () => {
     const seriesOption = [
@@ -35,13 +35,18 @@ function Questions() {
   };
 
   const gotoNext = () => {
+    setAttemptedFlag(false);
     setWrongAnsSelect(false);
     setSelectedOption(false);
     setSelectedQuestion((prev) => {
       if (prev === questionList?.length - 1) {
         setShowResult(true);
+
         navigate("/result", {
-          state: { rightAns: correctAnswer, wrgAns: wrongAnswers },
+          state: {
+            rightAns: correctAnswer,
+            attemptQuestion: attemptedQuestion,
+          },
         });
       } else {
         return (prev + 1) % questionList?.length;
@@ -62,6 +67,10 @@ function Questions() {
   };
 
   const checkAnswer = (item) => {
+    if (!attemptedFlag) {
+      setAttemptedQuestion((prev) => prev + 1);
+      setAttemptedFlag(true);
+    }
     if (item === questionList[selectedQuestion]?.correct_answer) {
       if (!selectedOption) {
         setSelectedOption(true);
@@ -69,13 +78,9 @@ function Questions() {
       } else {
         setCorrectAnswer(correctAnswer);
       }
-    } else {
-      if (wrongAnsSelect) {
-        setwrongAnswers(wrongAnswers);
-      } else {
-        setWrongAnsSelect(true);
-        setwrongAnswers((prev) => prev + 1);
-      }
+    }
+    if (attemptedFlag === 1) {
+      setAttemptedQuestion((prev) => prev + 1);
     }
   };
   const exitQuiz = () => {
@@ -84,14 +89,13 @@ function Questions() {
       navigate("/result", {
         state: {
           rightAns: correctAnswer,
-          wrgAns: wrongAnswers,
+          attemptQuestion: attemptedQuestion,
         },
       });
     } else {
       alert("Continue");
     }
   };
-
   return (
     <>
       {showresult ? (
