@@ -13,7 +13,7 @@ function Context({ children }) {
   const [attemptedQuestion, setAttemptedQuestion] = useState(0);
 
   const fetchData = async () => {
-    const url = "https://opentdb.com/api.php?amount=5";
+    const url = "https://opentdb.com/api.php?amount=20";
     const data = await fetch(url);
     const res = await data.json();
     setQuestionList(res.results);
